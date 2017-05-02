@@ -1,6 +1,6 @@
 ﻿<?php
 session_start();
-	/*if($_SESSION['bandera'] !=1 ){
+	if($_SESSION['bandera'] !=1 ){
 	  ?>
 	  <script type="text/javascript">
 	  	window.location="../vista/login.php";
@@ -14,7 +14,7 @@ session_start();
 			</script>
 			<?php
 		}
-	}*/
+	}
 ?>
 <!DOCTYPE html>
 <html>

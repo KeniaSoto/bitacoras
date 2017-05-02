@@ -3,7 +3,7 @@
 	function conectar(){
 		$server = "localhost";
 		$user = "root";
-		$password = "";
+		$password = "root";
 		$bd = "bitacora";
 
 		$conexion = mysqli_connect($server,$user,$password,$bd);

@@ -396,7 +396,7 @@
 			$j= count($arreglo);
 			$dia_NoLab = 0;
 			$dia = 0;
-
+			$nDate=0;
 			for($i=0;$i<$j;$i++){
 				$dia = $arreglo[$i];
 				$fechaActual = date('Y-m-j',$dia);
@@ -414,7 +414,8 @@
 				elseif(in_array($feriado,$feriados)){
 					$dia_NoLab++;
 				}else {
-					$newArray[$i]=$fechadia;
+					$newArray[$nDate]=$fechadia;
+					$nDate++;
 				}
 			}
 			$rlt = $j - $dia_NoLab;
@@ -570,25 +571,17 @@
 			$nuevafecha = null;
 
 			while($i<5){
+				echo "nuevaFecha: ".$dia;
 				$dia = strtotime($dia);
 				$fechaActual = date('Y-m-j',$dia);
-				/*
-				$dia = $arreglo[$i];
-				$fechaActual = date('Y-m-j',$dia);
-
-				$fechadia = strtotime ('-1 day', strtotime($fechaActual));
-				$fecha = getdate($fechadia);
-
-				$feriado = $fecha['mday']."-".$fecha['mon'];
-
-				$fechadia = date('Y-m-j',$fechadia); */
 				$fechadia = strtotime ('-1 day', strtotime($fechaActual));
 				$fecha = getdate($fechadia);
 
 				$feriado = $fecha['mday']."-".$fecha['mon'];
 				$fechadia = date('Y-m-j',$fechadia);
-				$nuevafecha = strtotime ( '+1 day' , $dia ) ;
-				$nuevafecha = date ( 'Y-m-d' , $nuevafecha );
+				$nuevafecha = strtotime ('+1 day',$dia);
+
+				$nuevafecha = date('Y-m-d',$nuevafecha);
 
 				if($fecha["wday"]==0 or $fecha["wday"]==6){ //Si es fin de semana
 					$dia_NoLab++;
@@ -596,8 +589,12 @@
 				elseif(in_array($feriado,$feriados)){ // Si es feriado
 					$dia_NoLab++;
 				}else {
+					$valida = strtotime ('+1 day', strtotime($fechadia));
+					$valida = date('Y-m-j',$valida);
+
+					echo "<br />fecha de ken: ".$valida;
+					$newArray[$i]=$valida;
 					$i++;
-					$newArray[$i]=$fechadia;
 				}
 				$dia = $nuevafecha;
 			}

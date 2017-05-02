@@ -20,9 +20,9 @@ if(isset($_POST['funcion'])){
     $bita = new Bitacora();
 		$valArray = json_decode($_POST['valArray']);
     $valores = 0;
-		/*$idL = $_SESSION['id'];
-		$idC = $bita->idConductor($idL); */
-    $idC = 1;
+		$idL = $_SESSION['id'];
+		$idC = $bita->idConductor($idL);
+    //$idC = 1;
     $valores = Bitacora::contarArreglo($valArray); // Contar el no. de elementos del arreglo
     echo "Cuenta: ".$valores."<br />";
     foreach($valArray  as $campos){
@@ -81,10 +81,11 @@ if(isset($_POST['funcion'])){
 						$kminicial = $kmCarga;
 
             $arrayFechas = Bitacora::EvaluarCincoDias($date);
+            print_r($arrayFechas);
 						$arrayHoras = $bita->horaAleat();
 						if($bita->validarRecorridos($kmfinal,$kmTope) == true){
 							echo "ENTRO IFTOPE <br/>".$kmfinal;
-							for ($i=0; $i<6; $i++) {
+							for ($i=0; $i<sizeof($arrayFechas); $i++) {
 							   $fecha = $arrayFechas[$i];
 							   $hora = $arrayHoras[$i];
 
@@ -106,35 +107,41 @@ if(isset($_POST['funcion'])){
         // Evalua si son dos fechas
         if($valores == 2){
                                  // **** PROCESO PARA LA PRIMERA CARGA (DOS FECHAS) **** //
-          /*$inicio = $valArray[0]->date;
-          $fin = $valArray[1]->date;
-          $evalua = $bita->calcularDias($inicio,$fin);
-          $diasF = Bitacora::EvaluarDias($evalua);
-          $noDias = Bitacora::contarArreglo($diasF);
-          print_r($diasF);
-          $arrayFechas2C = Bitacora::EvaluarCincoDias($fin);
-          $i = 0;
-          for ($i=0; $i<sizeof($diasF); $i++) {
-            echo $diasF[$i]."<br />";
-          }
-          for ($i=0; $i<sizeof($arrayFechas2C); $i++) {
-            echo $diasF[$i]."<br />";
-          }*/
 
+          //fechas
           $inicio = $valArray[0]->date;
           $fin = $valArray[1]->date;
+          // cargas
+          $kmCarga1 =$valArray[0]->km;
+          $kmCarga2 = $valArray[1]->km;
+          //Pagos
+          $pago1 =$valArray[0]->pago;
+          $pago2 = $valArray[1]->pago;
+          //Oper. fechas
           $evalua = $bita->calcularDias($inicio,$fin);
-          $diasF = Bitacora::EvaluarDias($evalua);
-          $noDias = Bitacora::contarArreglo($diasF);
+          $arrayFechas1C = Bitacora::EvaluarDias($evalua);
+          $noDias1C = Bitacora::contarArreglo($arrayFechas1C);
+          $arrayFechas2C = Bitacora::EvaluarCincoDias($fin);
+          $noDias2C = Bitacora::contarArreglo($arrayFechas2C);
 
+          for($i = 0; $i<$noDias1C; $i++){
+            echo "<br /> diaM: ".$arrayFechas1C[$i]."<br />";
+          }
+
+          for($i = 0; $i<$noDias2C; $i++){
+            echo "<br /> dia5: ".$arrayFechas2C[$i]."<br />";
+          }
+
+                                  // Operaciones de las primera fecha //
+        /*                          echo "<br />primer operacion <br />";
           //Agregar bitacora Conbustible
           $idBitaCom1C = $bita->agregarBitacoraCombustible(); // Recuperar el id de la bitacora de combustible
-          $idKMCarga1C = $bita->agregarKmCarga($date,$kmCarga);
+          $idKMCarga1C = $bita->agregarKmCarga($inicio,$kmCarga1);
           $idConsm1C = $bita->idconsumibleConductor($idC);
 
           //Registro del combustible de la Gasolina
-          $ltPremium1C = $bita->calcularLtGasPremium($pagoGas);
-          $bita->agregarCargaConsumible($ltPremium1C,$pagoGas,$idConsm1C);
+          $ltPremium1C = $bita->calcularLtGasPremium($pago1);
+          $bita->agregarCargaConsumible($ltPremium1C,$pago1,$idConsm1C);
   				//Registro de la Bitácora de Combustible
   				$bita->registroBitacora($idBitaCom1C,$idKMCarga1C); //Reg. de la bita Combustible
 
@@ -146,21 +153,20 @@ if(isset($_POST['funcion'])){
 					$ltkm1C = $bita->calcularKmRecorridos($ltPremium1C,$idC); // Litros en kilometros
 					echo "ltKM: ".$ltkm1C."</br>";
           // Cuál es el tope, o sea cuántos km rinde con esa gasolina
-					$kmTope1C = $bita->calcularKMRendidos($kmCarga,$ltkm1C);
+					$kmTope1C = $bita->calcularKMRendidos($kmCarga1,$ltkm1C);
 					echo "kmTOPE: ".$kmTope1C."</br>";
-					$kmxdia1C = $bita->calcularDiasFechas($noDias,$ltkm1C); // Cuántos km x día recorrerá
+					$kmxdia1C = $bita->calcularDiasFechas($noDias1C,$ltkm1C); // Cuántos km x día recorrerá
 					echo "KMdía: ".$kmxdia1C."</br>";
 
 						//Calcular el kmfinal
-						$kmfinal1C = $bita->calcularKmFinal($kmCarga,$kmxdia1C);
+						$kmfinal1C = $bita->calcularKmFinal($kmCarga1,$kmxdia1C);
 						echo "kmFinal1: ".$kmfinal1C."</br>";
-						$kminicial1C = $kmCarga;
-            $arrayFechas1C = $diasF;
+						$kminicial1C = $kmCarga1;
 						$arrayHoras1C = $bita->horaAleat();
+
 						if($bita->validarRecorridos($kmfinal1C,$kmTope1C) == true){
 							echo "ENTRO IFTOPE: <br/>";
-
-							for ($i=0; $i<sizeof($arrayFechas1C); $i++) {
+							for ($i=0; $i<$noDias1C; $i++) {
 							   $fecha1C = $arrayFechas1C[$i];
 							   $hora1C = $arrayHoras1C[$i];
 
@@ -175,18 +181,17 @@ if(isset($_POST['funcion'])){
 								 $kmfinal1C = $bita->calcularKmFinal($kminicial1C,$kmxdia1C);
 								 echo "KMfinal2: ".$kmfinal1C."</br>";
 							}
-							return $kmfinal1C;
 					}
-                                                //*** PROCESO PARA LA SEGUNDA CARGA (una fecha) ***//
-
+                                                //*** PROCESO PARA LA SEGUNDA CARGA (una fecha) **
+                                                  echo "<br />SEGUNDA operacion <br />";
           //Agregar bitacora Conbustible
           $idBitaCom2C = $bita->agregarBitacoraCombustible(); // Recuperar el id de la bitacora de combustible
-          $idKMCarga2C = $bita->agregarKmCarga($date,$kmCarga);
+          $idKMCarga2C = $bita->agregarKmCarga($fin,$kmCarga2);
           $idConsm2C = $bita->idconsumibleConductor($idC);
 
           //Registro del combustible de la Gasolina
-          $ltPremium2C = $bita->calcularLtGasPremium($pagoGas);
-          $bita->agregarCargaConsumible($ltPremium2C,$pagoGas,$idConsm1C);
+          $ltPremium2C = $bita->calcularLtGasPremium($pago2);
+          $bita->agregarCargaConsumible($ltPremium2C,$pago2,$idConsm2C);
           //Registro de la Bitácora de Combustible
           $bita->registroBitacora($idBitaCom2C,$idKMCarga2C); //Reg. de la bita Combustible
 
@@ -198,21 +203,21 @@ if(isset($_POST['funcion'])){
           $ltkm2C = $bita->calcularKmRecorridos($ltPremium2C,$idC); // Litros en kilometros
           echo "ltKM2: ".$ltkm2C."</br>";
           // Cuál es el tope, o sea cuántos km rinde con esa gasolina
-          $kmTope2C = $bita->calcularKMRendidos($kmCarga,$ltkm2C);
+          $kmTope2C = $bita->calcularKMRendidos($kmCarga2,$ltkm2C);
           echo "kmTOPE2: ".$kmTope2C."</br>";
-          $kmxdia2C = $bita->calcularDiasFechas($noDias,$ltkm2C); // Cuántos km x día recorrerá
+          $kmxdia2C = $bita->calcularDiasFechas($noDias2C,$ltkm2C); // Cuántos km x día recorrerá
           echo "KMdía2: ".$kmxdia2C."</br>";
 
             //Calcular el kmfinal
-            $kmfinal2C = $bita->calcularKmFinal($kmCarga,$kmxdia2C);
+            $kmfinal2C = $bita->calcularKmFinal($kmCarga2,$kmxdia2C);
             echo "kmFinal2: ".$kmfinal2C."</br>";
             $kminicial2C = $kmCarga;
-            $arrayFechas2C = Bitacora::EvaluarCincoDias($fin);
             $arrayHoras2C = $bita->horaAleat();
             if($bita->validarRecorridos($kmfinal2C,$kmTope2C) == true){
               echo "ENTRO IFTOPE2: <br/>";
+              var_dump($arrayFechas2C);
 
-              for ($i=0; $i<sizeof($arrayFechas2C); $i++) {
+              for ($i=0; $i<$noDias2C; $i++) {
                  $fecha2C = $arrayFechas2C[$i];
                  $hora2C = $arrayHoras2C[$i];
 
@@ -227,19 +232,7 @@ if(isset($_POST['funcion'])){
                  $kmfinal2C = $bita->calcularKmFinal($kminicial2C,$kmxdia2C);
                  echo "KMfinal2: ".$kmfinal2C."</br>";
               }
-              return $kmfinal2C;
-          }
-
-
-
-
-
-
-
-
-
-
-
+          } */
         }
         // Evalua si son más de dos fechas
         if($valores > 2){
@@ -253,6 +246,7 @@ if(isset($_POST['funcion'])){
           $totalDias = Bitacora::contarArreglo($diasF);
           $fechaLimite = $diasF[$totalDias-1];
           echo "total: ".$totalDias;
+          echo "fechaLimite: ".$fechaLimite;
 
           for($i=0; $i<$totalDias; $i++){
             if($inicio != $fechaLimite){
