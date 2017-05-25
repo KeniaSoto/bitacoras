@@ -574,7 +574,7 @@
 				echo "nuevaFecha: ".$dia;
 				$dia = strtotime($dia);
 				$fechaActual = date('Y-m-j',$dia);
-				$fechadia = strtotime ('-1 day', strtotime($fechaActual));
+				$fechadia = strtotime ('+0 day', strtotime($fechaActual));
 				$fecha = getdate($fechadia);
 
 				$feriado = $fecha['mday']."-".$fecha['mon'];
@@ -589,7 +589,7 @@
 				elseif(in_array($feriado,$feriados)){ // Si es feriado
 					$dia_NoLab++;
 				}else {
-					$valida = strtotime ('+1 day', strtotime($fechadia));
+					$valida = strtotime ('+0 day', strtotime($fechadia));
 					$valida = date('Y-m-j',$valida);
 
 					echo "<br />fecha de ken: ".$valida;

@@ -15,7 +15,7 @@
 			$this->nombre_base ="bitacora";
 				$this->host        ="localhost";
 				$this->usuario     ="root";
-				$this->contra      ='root';
+				$this->contra      ='';
 				$this->mysqli      =null;
 		}
 
